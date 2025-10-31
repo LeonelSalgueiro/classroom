@@ -2,6 +2,7 @@ import styles from "./app.module.css"
 
 import { Header } from "./components/Header"
 import { Tip } from "./components/Tip"
+import { Letter } from "./components/Letter"
 
 
 export function App(){
@@ -17,6 +18,7 @@ export function App(){
       <main>
         <Header current={5} max={10} onRestart={handleRestartGame}/>
         <Tip tip="Linguagem de programação dinâmica."/>
+        <Letter value="" />
       </main>
     </div>
 
