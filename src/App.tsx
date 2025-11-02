@@ -12,8 +12,8 @@ import { LettersUsed } from "./components/LettersUsed"
 import type { LettersUsedProps } from "./components/LettersUsed"
 
 export function App(){
+  const [score, setScore] = useState(0)
   
-  const [attempts, setAttempts] = useState(0)
   const [challenge, setChallenge ] = useState<Challenge | null>(null)
   const [letter, setLetter] = useState("")
   const [lettersUsed, setLettersUsed] = useState<LettersUsedProps[]>([])
@@ -27,7 +27,35 @@ export function App(){
     const randomWord = WORDS[index]
     setChallenge(randomWord)
 
-    setAttempts(0)
+    setScore(0)
+    setLetter("")
+    setLettersUsed([])
+  }
+
+
+  function handleConfirm(){
+    if (!challenge) {
+      return
+    }
+
+    if (!letter.trim()){
+      return alert("Digite uma letra!")
+    }
+
+    const value = letter.toUpperCase()
+    const exists = lettersUsed.find((used) => used.value.toUpperCase() === value)
+
+    if(exists){
+      return alert("Você já utilizou a letra " + value)
+    }
+
+    const hits = challenge.word.toUpperCase().split("").filter((char) => char === value).length
+
+    const correct = hits > 0
+    const currentScore = score + hits
+
+    setLettersUsed((prevState) => [...prevState, { value, correct }])
+    setScore(currentScore)
     setLetter("")
   }
   
@@ -42,19 +70,26 @@ export function App(){
   return (
     <div className={styles.container}>
       <main>
-        <Header current={attempts} max={10} onRestart={handleRestartGame}/>
-        <Tip tip="Linguagem de programação dinâmica."/>
+        <Header current={score} max={10} onRestart={handleRestartGame}/>
+        <Tip tip={challenge.tip}/>
         <div className={styles.word}>
           {
-            challenge.word.split("").map(() => (<Letter value="" />))
-          }
+            challenge.word.split("").map((letter, index) => {
+              const letterUsed = lettersUsed.find((used) => used.value.toUpperCase() === letter.toUpperCase())
+              return <Letter key={index} value={letterUsed?.value} color={letterUsed?.correct ? "correct" : "default"} />
+            })}
 
         </div>
 
         <h4>Palpite</h4>
         <div className={styles.guess}>
-          <Input autoFocus maxLength={1} placeholder="?" />
-          <Button title="Confirmar" />
+          <Input 
+          autoFocus maxLength={1}
+          value={letter}
+          placeholder="?" 
+          onChange={(e) => setLetter(e.target.value)}
+          />
+          <Button title="Confirmar" onClick={handleConfirm}/>
         </div>
 
         <LettersUsed data={lettersUsed}/>
