@@ -18,6 +18,8 @@ export function App(){
   const [letter, setLetter] = useState("")
   const [lettersUsed, setLettersUsed] = useState<LettersUsedProps[]>([])
 
+  const attempt_margin = 5
+
   function handleRestartGame(){
     alert("Reiniciar o jogo!")
   }
@@ -46,6 +48,7 @@ export function App(){
     const exists = lettersUsed.find((used) => used.value.toUpperCase() === value)
 
     if(exists){
+      setLetter("")
       return alert("Você já utilizou a letra " + value)
     }
 
@@ -58,10 +61,32 @@ export function App(){
     setScore(currentScore)
     setLetter("")
   }
+
+  function endGame(message: string){
+    alert(message)
+    startGame()
+  }
   
   useEffect( () => {
     startGame()
   }, [])
+
+  useEffect( () => {
+    if(!challenge){
+      return
+    }
+
+    setTimeout(() => {
+      if(score === challenge.word.length){
+        return endGame("Parabéns, você acertou a palavra!")
+      }
+
+      const attempt_limit = challenge.word.length + attempt_margin
+      if(lettersUsed.length === attempt_limit){
+         return endGame("Poxa, acabaram suas tentativas!")
+      }
+    }, 200)
+  }, [score, lettersUsed.length])
 
   if(!challenge){
     return
@@ -70,7 +95,7 @@ export function App(){
   return (
     <div className={styles.container}>
       <main>
-        <Header current={score} max={10} onRestart={handleRestartGame}/>
+        <Header current={lettersUsed.length} max={challenge.word.length + attempt_margin} onRestart={handleRestartGame}/>
         <Tip tip={challenge.tip}/>
         <div className={styles.word}>
           {
