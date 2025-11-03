@@ -1,4 +1,4 @@
-# Programming Word Game
+# Adivinhe
 
 Um jogo de adivinhação de palavras relacionadas à programação, desenvolvido com React e TypeScript. Os jogadores têm que adivinhar palavras relacionadas ao mundo da programação, tendo como auxílio uma dica sobre a palavra.
 
